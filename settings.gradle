@@ -1,0 +1,3 @@
+include ':uploadPlugin'
+include ':app'
+rootProject.name = "UploadFir"
