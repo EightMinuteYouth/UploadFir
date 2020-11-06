@@ -30,11 +30,11 @@ uploadConfig {
 
 3.配置项目签名和build类型
 
-![img](https://github.com/EightMinuteYouth/UploadFir/exampleImage/config.jpeg?raw=true)
+![img](https://github.com/EightMinuteYouth/UploadFir/blob/master/exampleImage/config.jpeg?raw=true)
 
 4.一键点击你自己需要的打包类型会自动帮你打包完上传到fir
 
-![img](https://github.com/EightMinuteYouth/UploadFir/exampleImage/useImage.jpeg?raw=true)
+![img](https://github.com/EightMinuteYouth/UploadFir/blob/master/exampleImage/useImage.jpeg?raw=true)
 
 
 看到这里给个star再走呗
