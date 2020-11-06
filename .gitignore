@@ -15,3 +15,5 @@
 
 # Project exclude paths
 /uploadPlugin/build/
+.idea
+app/libs/
