@@ -1,5 +1,7 @@
 apply plugin: 'groovy'
 apply plugin: 'kotlin'
+/// 上传插件的时候用到
+apply from: '../upload_bintray.gradle'
 
 repositories {
     mavenCentral()

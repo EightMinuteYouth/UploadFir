@@ -9,10 +9,27 @@
 无意间看到某群有人讨论gradle的脚本, 然后百度一波之后决定做了这个gradle
 一键打包插件
 
+### 当前版本
+
+[ ![Download](https://api.bintray.com/packages/badyouth/maven/uploadFir/images/download.svg?version=1.0.0) ](https://bintray.com/badyouth/maven/uploadFir/1.0.0/link)
+
 ###  简单的使用姿势
 1.在根目录的build.gradle里面添加
 
-``` classpath xxxxxxx ```
+``` 
+repositories {
+        ...
+        maven {
+            url 'https://dl.bintray.com/badyouth/maven'
+        }
+    }
+```
+和
+
+```
+/// xxx 为版本号
+classpath 'com.badyouth.plugin:uploadPlugin:xxx'
+```
 
 2.在app目录下的build.gradle里面添加
 

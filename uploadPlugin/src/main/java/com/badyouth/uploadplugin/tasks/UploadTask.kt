@@ -25,7 +25,8 @@ open class UploadTask : DefaultTask() {
     private lateinit var variantScope: VariantScope
 
     /// 获取配置文件
-    private var uploadModel: UploadModel = project.extensions.getByName("uploadConfig") as UploadModel
+    private var uploadModel: UploadModel =
+        project.extensions.getByName("uploadConfig") as UploadModel
 
     init {
         description = "自动上传"
@@ -47,7 +48,7 @@ open class UploadTask : DefaultTask() {
         Logger.log("获取到当前文件位置为 = $filePath")
 
         /// 获取App输出信息
-        val apkData = variantScope.outputScope.mainSplit
+        val variantInfo = variantScope.variantDslInfo
 
         /// 获取到显示app的名字
         val appName = ApkUtil.getApkName(filePath, variantScope)
@@ -58,8 +59,7 @@ open class UploadTask : DefaultTask() {
             /// 请求fir凭证
             /// withContext {}不会创建新的协程，在指定协程上运行挂起代码块，并挂起该协程直至代码块运行完成
             val certificateModel = withContext(Dispatchers.Default) {
-                requestCertificateUrl(
-                        variantScope.variantData.applicationId, uploadModel.apiToken)
+                requestCertificateUrl(variantInfo.applicationId, uploadModel.apiToken)
             }
 
             certificateModel?.let {
@@ -69,17 +69,19 @@ open class UploadTask : DefaultTask() {
                 val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
                 val outTime = dateFormat.format(Date())
                 val description = "打包时间: $outTime \n\n" +
-                        "当前开发版本: ${apkData.baseName} \n\n" +
+                        "当前开发版本: ${variantInfo.baseName} \n\n" +
                         "功能描述: ${uploadModel.description}"
 
-                uploadApk(bean.upload_url, mutableMapOf(
+                uploadApk(
+                    bean.upload_url, mutableMapOf(
                         "key" to bean.key,
                         "token" to bean.token,
                         "x:name" to appName,
-                        "x:version" to apkData.versionName,
-                        "x:build" to apkData.versionCode.toString(),
+                        "x:version" to "${variantInfo.versionName}",
+                        "x:build" to "${variantInfo.versionCode}",
                         "x:changelog" to description
-                ), filePath)
+                    ), filePath
+                )
             }
         }
     }

@@ -49,6 +49,7 @@ object ApkUtil {
 
         val process: Process = ProcessBuilder(aaptPath, "d", "badging", apkPath).redirectErrorStream(true).start()
         val list = process.inputStream.bufferedReader().readLines()
-        return list.first { it == "application-label" }
+        val label = list.first { it.startsWith("application-label") }
+        return label.substring(label.indexOf("'") + 1, label.length - 1)
     }
 }

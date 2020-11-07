@@ -1,8 +1,8 @@
 package com.badyouth.uploadplugin.request
 
-import com.google.gson.Gson
 import com.badyouth.uploadplugin.Logger
 import com.badyouth.uploadplugin.model.CertificateModel
+import com.google.gson.Gson
 import okhttp3.FormBody
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
@@ -11,6 +11,7 @@ import okhttp3.Request
 import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
 import java.text.DecimalFormat
+import java.util.concurrent.TimeUnit
 
 
 /**
@@ -25,7 +26,14 @@ object UploadRequest {
 
 
     private val client by lazy {
-        OkHttpClient()
+        OkHttpClient().newBuilder()
+            /// 设置连接超时时间
+            .connectTimeout(30, TimeUnit.SECONDS)
+            /// 设置读取超时时间
+            .readTimeout(30, TimeUnit.SECONDS)
+            /// 设置写入超时时间
+            .writeTimeout(30, TimeUnit.SECONDS)
+            .build()
     }
 
     /// 获取fir上传凭证内容
@@ -34,13 +42,15 @@ object UploadRequest {
 
         try {
             val request = Request.Builder()
-                    .url(uploadCertificate)
-                    .post(FormBody.Builder()
-                            .add("type", "android")
-                            .add("bundle_id", bundleId)
-                            .add("api_token", apiToken)
-                            .build())
-                    .build()
+                .url(uploadCertificate)
+                .post(
+                    FormBody.Builder()
+                        .add("type", "android")
+                        .add("bundle_id", bundleId)
+                        .add("api_token", apiToken)
+                        .build()
+                )
+                .build()
 
             val response = client.newCall(request).execute() //获取Response对象
             model = response.body?.let {
@@ -60,9 +70,11 @@ object UploadRequest {
         val file = File(filePath)
 
         val builder = MultipartBody.Builder()
-                .setType(MultipartBody.FORM)
-                .addFormDataPart("file", file.name,
-                        file.asRequestBody("application/octet-stream".toMediaType()))
+            .setType(MultipartBody.FORM)
+            .addFormDataPart(
+                "file", file.name,
+                file.asRequestBody("application/octet-stream".toMediaType())
+            )
 
         params.forEach {
             builder.addFormDataPart(it.key, it.value)
@@ -71,17 +83,19 @@ object UploadRequest {
         /// 建立一个代理获取输出流操作
         val requestBody = ProxyRequestBody(builder.build()) { total, current ->
             run {
-                Logger.log("当前上传进度 =  ${DecimalFormat("0.00%")
-                        .format(current / total)}")
+                Logger.log(
+                    "当前上传进度 =  ${DecimalFormat("0.00%")
+                        .format(current / total)}"
+                )
             }
         }
 
 
         try {
             val request = Request.Builder()
-                    .url(uploadUrl)
-                    .post(requestBody)
-                    .build()
+                .url(uploadUrl)
+                .post(requestBody)
+                .build()
 
             val response = client.newCall(request).execute() //获取Response对象
             Logger.log("当前code = ${response.code} msg = ${response.message}")
